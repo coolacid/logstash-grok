@@ -3,8 +3,9 @@ MIKROTIKFIREWALLNONAT %{SYSLOGTIMESTAMP:date} MikroTik %{DATA:LogPrefix} %{DATA:
 
 # Firewall Log (NAT):
 MIKROTIKFIREWALLNAT %{SYSLOGTIMESTAMP:date} MikroTik %{DATA:LogPrefix} %{DATA:LogChain}: in:%{DATA:src_zone} out:%{DATA:dst_zone}, src-mac %{MAC}, proto %{DATA:proto}, %{IP:src_ip}:%{INT:src_port}->%{IP:dst_ip}:%{INT:dst_port}, NAT \(%{IP:nat_osrc_ip}:%{INT:nat_osrc_port}->%{IP:nat_nsrc_ip}:%{INT:nat_nsrc_port}\)->%{IP:nat_dst_ip}:%{INT:nat_dstport}
+MIKROTIKFIREWALLNAT2 %{SYSLOGTIMESTAMP:date} MikroTik %{DATA:LogPrefix} %{DATA:LogChain}: in:%{DATA:src_zone} out:%{DATA:dst_zone}, src-mac %{MAC}, proto %{DATA:proto}, %{IP:src_ip}:%{INT:src_port}->%{IP:dst_ip}:%{INT:dst_port}, NAT %{IP:nat_osrc_ip}:%{INT:nat_osrc_port}->\(%{IP:nat_nsrc_ip}:%{INT:nat_nsrc_port}->%{IP:nat_dst_ip}:%{INT:nat_dstport}\)
 
-MIKROTIKFIREWALL (?:%{MIKROTIKFIREWALLNAT}|%{MIKROTIKFIREWALLNONAT})
+MIKROTIKFIREWALL (?:%{MIKROTIKFIREWALLNAT}|%{MIKROTIKFIREWALLNAT2}|%{MIKROTIKFIREWALLNONAT})
 
 # DNS
 MIKROTIKDNSQUERY %{SYSLOGTIMESTAMP:date} MikroTik query from %{IP:src_ip}: #%{INT:query_id} %{GREEDYDATA:query}
@@ -12,5 +13,10 @@ MIKROTIKDNSANSWER %{SYSLOGTIMESTAMP:date} MikroTik done query: #%{INT:query_id} 
 
 MIKROTIKDNS (?:%{MIKROTIKDNSANSWER}|%{MIKROTIKDNSQUERY})
 
+#WebProxy
+MIKROTIKWEBPROXY %{SYSLOGTIMESTAMP:date} MikroTik web-proxy: %{IP:src_ip} %{WORD:request_type} %{URI:url}
+# action=%{WORD:action}
+# cache=%{WORD:cache}
+
 # Add all the above
-MIKROTIK (?:%{MIKROTIKFIREWALL}|%{MIKROTIKDNS})
+MIKROTIK (?:%{MIKROTIKFIREWALL}|%{MIKROTIKDNS}|%{MIKROTIKWEBPROXY})
