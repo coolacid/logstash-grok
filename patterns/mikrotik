@@ -5,3 +5,12 @@ MIKROTIKFIREWALLNONAT %{SYSLOGTIMESTAMP:date} MikroTik %{DATA:LogPrefix} %{DATA:
 MIKROTIKFIREWALLNAT %{SYSLOGTIMESTAMP:date} MikroTik %{DATA:LogPrefix} %{DATA:LogChain}: in:%{DATA:src_zone} out:%{DATA:dst_zone}, src-mac %{MAC}, proto %{DATA:proto}, %{IP:src_ip}:%{INT:src_port}->%{IP:dst_ip}:%{INT:dst_port}, NAT \(%{IP:nat_osrc_ip}:%{INT:nat_osrc_port}->%{IP:nat_nsrc_ip}:%{INT:nat_nsrc_port}\)->%{IP:nat_dst_ip}:%{INT:nat_dstport}
 
 MIKROTIKFIREWALL (?:%{MIKROTIKFIREWALLNAT}|%{MIKROTIKFIREWALLNONAT})
+
+# DNS
+MIKROTIKDNSQUERY %{SYSLOGTIMESTAMP:date} MikroTik query from %{IP:src_ip}: #%{INT:query_id} %{GREEDYDATA:query}
+MIKROTIKDNSANSWER %{SYSLOGTIMESTAMP:date} MikroTik done query: #%{INT:query_id} %{GREEDYDATA:query}
+
+MIKROTIKDNS (?:%{MIKROTIKDNSANSWER}|%{MIKROTIKDNSQUERY})
+
+# Add all the above
+MIKROTIK (?:%{MIKROTIKFIREWALL}|%{MIKROTIKDNS})
