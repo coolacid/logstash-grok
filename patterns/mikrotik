@@ -19,10 +19,7 @@ MIKROTIKWEBPROXY %{SYSLOGTIMESTAMP:date} MikroTik web-proxy: %{IP:src_ip} %{WORD
 # cache=%{WORD:cache}
 
 #DHCP
-MIKROTIKDHCPASSIGN %{SYSLOGTIMESTAMP:date} MikroTik %{DATA:DHCP_zone} assigned %{IP:src_ip} to %{MAC:src_mac}
-MIKROTIKDHCPREMOVE %{SYSLOGTIMESTAMP:date} MikroTik %{DATA:DHCP_zone} deassigned %{IP:src_ip} from %{MAC:src_mac}
-
-MIKROTIKDHCP (?:%{MIKROTIKDHCPASSIGN}|%{MIKROTIKDHCPREMOVE})
+MIKROTIKDHCP %{SYSLOGTIMESTAMP:date} MikroTik %{DATA:DHCP_zone} %{WORD:DHCP_state} %{IP:src_ip} (?:from|to) %{MAC:src_mac}
 
 # Add all the above
 MIKROTIK (?:%{MIKROTIKFIREWALL}|%{MIKROTIKDNS}|%{MIKROTIKWEBPROXY}|%{MIKROTIKDHCP})
