@@ -1,9 +1,9 @@
 # Firewall Log (No NAT):
-MIKROTIKFIREWALLNONAT %{SYSLOGTIMESTAMP:date} MikroTik %{DATA:LogPrefix} %{DATA:LogChain}: in:%{DATA:src_zone} out:%{DATA:dst_zone}, src-mac %{MAC}, proto %{DATA:proto}, %{IP:src_ip}:%{INT:src_port}->%{IP:dst_ip}:%{INT:dst_port}
+MIKROTIKFIREWALLNONAT %{SYSLOGTIMESTAMP:date} MikroTik %{DATA:LogPrefix} %{DATA:LogChain}: in:%{DATA:src_zone} out:%{DATA:dst_zone}, src-mac %{MAC}, proto %{DATA:proto}, %{IP:src_ip}:%{INT:src_port}->%{IP:dst_ip}:%{INT:dst_port}, len %{INT:length}
 
 # Firewall Log (NAT):
-MIKROTIKFIREWALLNAT %{SYSLOGTIMESTAMP:date} MikroTik %{DATA:LogPrefix} %{DATA:LogChain}: in:%{DATA:src_zone} out:%{DATA:dst_zone}, src-mac %{MAC}, proto %{DATA:proto}, %{IP:src_ip}:%{INT:src_port}->%{IP:dst_ip}:%{INT:dst_port}, NAT \(%{IP:nat_osrc_ip}:%{INT:nat_osrc_port}->%{IP:nat_nsrc_ip}:%{INT:nat_nsrc_port}\)->%{IP:nat_dst_ip}:%{INT:nat_dstport}
-MIKROTIKFIREWALLNAT2 %{SYSLOGTIMESTAMP:date} MikroTik %{DATA:LogPrefix} %{DATA:LogChain}: in:%{DATA:src_zone} out:%{DATA:dst_zone}, src-mac %{MAC}, proto %{DATA:proto}, %{IP:src_ip}:%{INT:src_port}->%{IP:dst_ip}:%{INT:dst_port}, NAT %{IP:nat_osrc_ip}:%{INT:nat_osrc_port}->\(%{IP:nat_nsrc_ip}:%{INT:nat_nsrc_port}->%{IP:nat_dst_ip}:%{INT:nat_dstport}\)
+MIKROTIKFIREWALLNAT %{SYSLOGTIMESTAMP:date} MikroTik %{DATA:LogPrefix} %{DATA:LogChain}: in:%{DATA:src_zone} out:%{DATA:dst_zone}, src-mac %{MAC}, proto %{DATA:proto}, %{IP:src_ip}:%{INT:src_port}->%{IP:dst_ip}:%{INT:dst_port}, NAT \(%{IP:nat_osrc_ip}:%{INT:nat_osrc_port}->%{IP:nat_nsrc_ip}:%{INT:nat_nsrc_port}\)->%{IP:nat_dst_ip}:%{INT:nat_dstport}, len %{INT:length}
+MIKROTIKFIREWALLNAT2 %{SYSLOGTIMESTAMP:date} MikroTik %{DATA:LogPrefix} %{DATA:LogChain}: in:%{DATA:src_zone} out:%{DATA:dst_zone}, proto %{DATA:proto}, %{IP:src_ip}:%{INT:src_port}->%{IP:dst_ip}:%{INT:dst_port}, NAT %{IP:nat_osrc_ip}:%{INT:nat_osrc_port}->\(%{IP:nat_nsrc_ip}:%{INT:nat_nsrc_port}->%{IP:nat_dst_ip}:%{INT:nat_dstport}\), len %{INT:length}
 
 MIKROTIKFIREWALL (?:%{MIKROTIKFIREWALLNAT}|%{MIKROTIKFIREWALLNAT2}|%{MIKROTIKFIREWALLNONAT})
 
@@ -21,5 +21,13 @@ MIKROTIKWEBPROXY %{SYSLOGTIMESTAMP:date} MikroTik web-proxy: %{IP:src_ip} %{WORD
 #DHCP
 MIKROTIKDHCP %{SYSLOGTIMESTAMP:date} MikroTik %{DATA:DHCP_zone} %{WORD:DHCP_state} %{IP:src_ip} (?:from|to) %{MAC:src_mac}
 
+# System Login
+
+MIKROTIKLOGINOUT %{SYSLOGTIMESTAMP:date} MikroTik user %{WORD:user} logged (?:out|in) from %{IP:src_ip} via %{WORD:src_type}
+MIKROTIKLOGINFAIL %{SYSLOGTIMESTAMP:date} MikroTik login failure for user %{WORD:user} from %{IP:src_ip} via %{WORD:src_type}
+
+MIKROTIKLOGIN (?:%{MIKROTIKLOGINOUT}|%{MIKROTIKLOGINFAIL})
+
 # Add all the above
-MIKROTIK (?:%{MIKROTIKFIREWALL}|%{MIKROTIKDNS}|%{MIKROTIKWEBPROXY}|%{MIKROTIKDHCP})
+MIKROTIK (?:%{MIKROTIKFIREWALL}|%{MIKROTIKDNS}|%{MIKROTIKWEBPROXY}|%{MIKROTIKDHCP}|%{MIKROTIKLOGIN})
+
